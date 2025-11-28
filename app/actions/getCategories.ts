@@ -22,17 +22,18 @@ export async function getCategories(): Promise<string[]> {
  * Récupère le nombre d'aliments par catégorie
  * @returns Un objet avec les catégories comme clés et le nombre d'aliments comme valeurs
  */
-export async function getCategoriesWithCount(): Promise<Record<string, number>> {
-  const courses = await db.select().from(courseTable);
-  
+export async function getCategoriesWithCount(): Promise<
+  Record<string, number>
+> {
+  const courses = await db.select().from(courseTable).execute();
+
   const countMap: Record<string, number> = {};
-  
+
   courses.forEach((course) => {
     if (course.categorie) {
       countMap[course.categorie] = (countMap[course.categorie] || 0) + 1;
     }
   });
-  
+
   return countMap;
 }
-
