@@ -6,9 +6,14 @@ import { eq } from "drizzle-orm";
 export const PUT = async (req: NextRequest) => {
   try {
     const body = await req.json();
-    
+
     // Validation du format
-    if (!Array.isArray(body) || body.length === 0 || typeof body[0] !== 'object' || !('id' in body[0])) {
+    if (
+      !Array.isArray(body) ||
+      body.length === 0 ||
+      typeof body[0] !== "object" ||
+      !("id" in body[0])
+    ) {
       return NextResponse.json(
         { error: "Format invalide. Envoyez un tableau d'objets {id, present}" },
         { status: 400 }
@@ -17,10 +22,10 @@ export const PUT = async (req: NextRequest) => {
 
     // Mise à jour en parallèle pour de meilleures performances
     await Promise.all(
-      body.map((item: { id: number; present: boolean }) =>
+      body.map((item: { id: number; checked: boolean }) =>
         db
           .update(courseTable)
-          .set({ present: item.present })
+          .set({ checked: item.checked })
           .where(eq(courseTable.id, item.id))
       )
     );
@@ -34,4 +39,3 @@ export const PUT = async (req: NextRequest) => {
     );
   }
 };
-
